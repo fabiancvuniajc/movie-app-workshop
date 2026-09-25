@@ -18,7 +18,7 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
     }
 
     lastSubmittedTerm.current = normalizedTerm
-    onQuery(query)
+    onQuery(normalizedTerm)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
       }
 
       lastSubmittedTerm.current = normalizedTerm
-      onQuery(query)
+      onQuery(normalizedTerm)
     }, 700)
 
     return () => {
