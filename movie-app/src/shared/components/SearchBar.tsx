@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 
 interface Props {
@@ -8,8 +8,16 @@ interface Props {
 
 export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Props) => {
   const [query, setQuery] = useState('')
+  const lastSubmittedTerm = useRef('')
 
   const handleSearch = () => {
+    const normalizedTerm = query.trim().toLowerCase()
+
+    if (!normalizedTerm) {
+      return
+    }
+
+    lastSubmittedTerm.current = normalizedTerm
     onQuery(query)
   }
 
@@ -21,6 +29,13 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
+      const normalizedTerm = query.trim().toLowerCase()
+
+      if (!normalizedTerm || normalizedTerm === lastSubmittedTerm.current) {
+        return
+      }
+
+      lastSubmittedTerm.current = normalizedTerm
       onQuery(query)
     }, 700)
 

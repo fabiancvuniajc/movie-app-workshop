@@ -7,18 +7,27 @@ export const useMovies = () => {
   const [previousTerms, setPreviousTerms] = useState<string[]>(['batman'])
   const [hasSearched, setHasSearched] = useState(false)
   const moviesCache = useRef<Record<string, Movie[]>>({})
+  const latestRequestId = useRef(0)
 
   const runSearch = async (normalizedTerm: string) => {
+    const requestId = ++latestRequestId.current
+
     if (moviesCache.current[normalizedTerm]) {
-      setMovies(moviesCache.current[normalizedTerm])
-      setHasSearched(true)
+      if (requestId === latestRequestId.current) {
+        setMovies(moviesCache.current[normalizedTerm])
+        setHasSearched(true)
+      }
+
       return
     }
 
     const results = await getMoviesByQuery(normalizedTerm)
     moviesCache.current[normalizedTerm] = results
-    setMovies(results)
-    setHasSearched(true)
+
+    if (requestId === latestRequestId.current) {
+      setMovies(results)
+      setHasSearched(true)
+    }
   }
 
   const handleSearch = async (query: string) => {

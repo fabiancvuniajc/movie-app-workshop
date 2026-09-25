@@ -12,8 +12,10 @@ export const PreviousSearches = ({ searches, onLabelClicked }: Props) => {
     <section className="previous-searches">
       <ul>
         {searches.map((term) => (
-          <li key={term} onClick={() => onLabelClicked(term)}>
-            {term}
+          <li key={term}>
+            <button type="button" onClick={() => onLabelClicked(term)}>
+              {term}
+            </button>
           </li>
         ))}
       </ul>
