@@ -6,7 +6,7 @@ Proyecto final del taller educativo de **React + TypeScript + Vite**. La app per
 
 El proyecto Vite está en:
 
-- `/home/runner/work/movie-app-workshop/movie-app-workshop/movie-app`
+- `movie-app/`
 
 > Todos los comandos deben ejecutarse dentro de `movie-app/`.
 
