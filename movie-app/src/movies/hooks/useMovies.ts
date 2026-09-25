@@ -4,6 +4,7 @@ import type { Movie } from '../interfaces/movie.interface'
 
 export const useMovies = () => {
   const [movies, setMovies] = useState<Movie[]>([])
+  // Valor inicial pedagógico para practicar clic en búsquedas previas desde el arranque.
   const [previousTerms, setPreviousTerms] = useState<string[]>(['batman'])
   const [hasSearched, setHasSearched] = useState(false)
   const moviesCache = useRef<Record<string, Movie[]>>({})
@@ -21,14 +22,19 @@ export const useMovies = () => {
       return
     }
 
-    const results = await getMoviesByQuery(normalizedTerm)
-    if (results.length > 0) {
+    try {
+      const results = await getMoviesByQuery(normalizedTerm)
       moviesCache.current[normalizedTerm] = results
-    }
 
-    if (requestId === latestRequestId.current) {
-      setMovies(results)
-      setHasSearched(true)
+      if (requestId === latestRequestId.current) {
+        setMovies(results)
+        setHasSearched(true)
+      }
+    } catch {
+      if (requestId === latestRequestId.current) {
+        setMovies([])
+        setHasSearched(true)
+      }
     }
   }, [])
 

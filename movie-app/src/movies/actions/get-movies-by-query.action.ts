@@ -21,6 +21,6 @@ export const getMoviesByQuery = async (query: string): Promise<Movie[]> => {
       poster: movie.Poster === 'N/A' ? '/no-poster.png' : movie.Poster,
     }))
   } catch {
-    return []
+    throw new Error('Failed to fetch movies from OMDb')
   }
 }

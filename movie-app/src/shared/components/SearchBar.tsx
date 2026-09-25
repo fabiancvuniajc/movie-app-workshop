@@ -8,6 +8,7 @@ interface Props {
 
 export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Props) => {
   const [query, setQuery] = useState('')
+  const onQueryRef = useRef(onQuery)
   const lastSubmittedTerm = useRef('')
 
   const handleSearch = () => {
@@ -18,7 +19,7 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
     }
 
     lastSubmittedTerm.current = normalizedTerm
-    onQuery(normalizedTerm)
+    onQueryRef.current(normalizedTerm)
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -26,6 +27,10 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
       handleSearch()
     }
   }
+
+  useEffect(() => {
+    onQueryRef.current = onQuery
+  }, [onQuery])
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -36,13 +41,13 @@ export const SearchBar = ({ onQuery, placeholder = 'Buscar película...' }: Prop
       }
 
       lastSubmittedTerm.current = normalizedTerm
-      onQuery(normalizedTerm)
+      onQueryRef.current(normalizedTerm)
     }, 700)
 
     return () => {
       clearTimeout(timeoutId)
     }
-  }, [query, onQuery])
+  }, [query])
 
   return (
     <div className="search-bar">
