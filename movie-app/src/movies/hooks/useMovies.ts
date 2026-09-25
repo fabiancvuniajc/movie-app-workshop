@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { getMoviesByQuery } from '../actions/get-movies-by-query.action'
 import type { Movie } from '../interfaces/movie.interface'
 
@@ -9,7 +9,7 @@ export const useMovies = () => {
   const moviesCache = useRef<Record<string, Movie[]>>({})
   const latestRequestId = useRef(0)
 
-  const runSearch = async (normalizedTerm: string) => {
+  const runSearch = useCallback(async (normalizedTerm: string) => {
     const requestId = ++latestRequestId.current
 
     if (moviesCache.current[normalizedTerm]) {
@@ -22,15 +22,17 @@ export const useMovies = () => {
     }
 
     const results = await getMoviesByQuery(normalizedTerm)
-    moviesCache.current[normalizedTerm] = results
+    if (results.length > 0) {
+      moviesCache.current[normalizedTerm] = results
+    }
 
     if (requestId === latestRequestId.current) {
       setMovies(results)
       setHasSearched(true)
     }
-  }
+  }, [])
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
     const normalizedTerm = query.trim().toLowerCase()
 
     if (!normalizedTerm) {
@@ -46,9 +48,9 @@ export const useMovies = () => {
     })
 
     await runSearch(normalizedTerm)
-  }
+  }, [runSearch])
 
-  const handleTermClicked = async (term: string) => {
+  const handleTermClicked = useCallback(async (term: string) => {
     const normalizedTerm = term.trim().toLowerCase()
 
     if (!normalizedTerm) {
@@ -56,7 +58,7 @@ export const useMovies = () => {
     }
 
     await runSearch(normalizedTerm)
-  }
+  }, [runSearch])
 
   return {
     movies,
